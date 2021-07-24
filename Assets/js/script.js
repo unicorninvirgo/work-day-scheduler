@@ -18,6 +18,7 @@ for( i=0; i < 24; i++){
     //set midday
     i < 12 ? ap = 'AM' : ap = 'PM';
 
+    //format time of day
     if(i===0 || i===24){
         x = 12;
     }
@@ -36,16 +37,28 @@ for( i=0; i < 24; i++){
                 ${x}:00 ${ap}
             </div>
             <div class="col-8" data-event-time="${x}:00${ap}">
-                <input type="textarea" class="form-control"  aria-describedby="inputGroup-sizing-lg">
+                <textarea></textarea>
             </div>
-            <div class="col" data-event-button="">
-               <p><i class="fas fa-book"></i></p>
+            <div class="col event-save" data-event-button="">
+               <p><i class="fas fa-book fa-2x"></i></p>
             </div>
         </div>`);
 }
 
+//save user calendar events to storage
+function saveEvent(){
 
+    var userEvent = {
+        userDate: "",
+        userTime: "",
+        userEvent: ""
+    };
+    
+    eventStorage.push(userEvent);
+    localStorage.setItem("userEvent",JSON.stringify(userEvent));
+  
+}
 //capture event to save event
-elTimeBlock.on("click",function(){
-    alert("hello");
+elTimeBlock.on("click",".event-save", function(event){
+    alert(event.target);
 })

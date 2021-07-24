@@ -2,6 +2,7 @@
 var elTimeBlock = $('#row-timeblock');
 var elCurrentDay = $('#currentDay');
 
+
 //capture and format today's date
 const today = moment().format("dddd, MMMM Do YYYY");
 elCurrentDay.append(today);
@@ -43,3 +44,8 @@ for( i=0; i < 24; i++){
         </div>`);
 }
 
+
+//capture event to save event
+elTimeBlock.on("click",function(){
+    alert("hello");
+})

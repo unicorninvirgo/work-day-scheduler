@@ -9,13 +9,6 @@ var currentHour = moment().format("MM-DD-YYYY hh:00 A");
 
 elCurrentDay.append(today);
 
-//var time = '8:00 PM'
-
-//var eventDateTime = moment(today + ' ' + time, "dddd, MMMM Do YYYY hh:00 A").format("MM-DD-YYYY hh:00 A") ;
-
-//log storage
-let eventStorage = localStorage.getItem("calendarEvents") || [];
-
 //create day calendar for planner
 for( i=0; i < 24; i++){
     let x = 0;
@@ -56,18 +49,16 @@ for( i=0; i < 24; i++){
 
     }
 
-    console.log(colorClass);
-
     //format div for calendar day row
     elTimeBlock.append(`
         <div class="row">
             <div class="col" data-time="${x}:00${ap}">
                 ${time}
             </div>
-            <div class="col-8 ${colorClass}" data-event-time="${x}:00${ap}">
-                <textarea></textarea>
+            <div class="col-8 ${colorClass} " data-event-message-time="${x}:00${ap}">
+                <textarea id="event-message"></textarea>
             </div>
-            <div class="col event-save" data-event-button="$ {x}:00${ap}">
+            <div class="col event-save" data-event-button="button-${x}:00${ap}">
                <p><i class="fas fa-book fa-2x"></i></p>
             </div>
         </div>`);
@@ -79,20 +70,24 @@ function functionFormatDate(){
 
 function checkDate(eventDateTime){
     var colorVal = '';
+    var currentHourStart = moment().startOf('hour')
+    var currentHourEnd = moment().endOf('hour')
+
+   // console.log(currentHourEnd);
 
    if(moment(eventDateTime,"MM-DD-YYYY hh:00 A").isBefore(moment(currentHour,"MM-DD-YYYY hh:00 A")))
    {
        colorVal = 'before';
    }
 
-   if(moment(eventDateTime,"MM-DD-YYYY hh:00 A").isSame(moment(currentHour,"MM-DD-YYYY hh:00 A")))
-   {
-       colorVal = 'same';
-   }
-
    if(moment(eventDateTime,"MM-DD-YYYY hh:00 A").isAfter(moment(currentHour,"MM-DD-YYYY hh:00 A")))
    {
        colorVal = 'after';
+   }
+
+   if(moment(eventDateTime,"MM-DD-YYYY hh:00 A").isBetween(currentHourStart,currentHourEnd))
+   {
+       colorVal = 'same';
    }
 
    return colorVal;
@@ -102,19 +97,30 @@ function checkDate(eventDateTime){
 //save user calendar events to storage
 function saveEvent(event){
    
-   let enteredEvent = $(event.target).attr('data-letter');
+  // let enteredEvent = event;
+   event.preventDefault();
 
-   console.log(enteredEvent);
 
-    var userEvent = {
+   let eventStorage = JSON.parse(localStorage.getItem("calendarEvents"));
+
+    if(eventStorage == null)
+    {
+       eventStorage = [];
+    }
+   
+   var dataEventTime = $(this).prev().attr('data-event-message-time');
+   var dataEvent = $(this).prev().children().val();
+
+   var userEvent = {
         userDate: today,
-        userTime: "",
-        userEvent: ""
+        userTime: dataEventTime,
+        userEvent: dataEvent
     };
     
     eventStorage.push(userEvent);
-    localStorage.setItem("userEvent",JSON.stringify(userEvent));
+    localStorage.setItem("calendarEvents",JSON.stringify(eventStorage));
   
 }
+
 //capture event to save event
 elTimeBlock.on("click",".event-save", saveEvent)

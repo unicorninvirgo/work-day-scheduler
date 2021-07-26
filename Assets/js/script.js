@@ -41,9 +41,12 @@ for( i=0; i < 24; i++){
         case "before": 
             colorClass = 'past';
             break;
+
         case "after":
             colorClass = 'future';
-        case "same":
+            break;
+
+        default:
             colorClass = 'present';
             break;
 
@@ -85,7 +88,7 @@ function checkDate(eventDateTime){
        colorVal = 'after';
    }
 
-   if(moment(eventDateTime,"MM-DD-YYYY hh:00 A").isBetween(currentHourStart,currentHourEnd))
+   if(moment(eventDateTime,"MM-DD-YYYY hh:00 A").isBetween(moment(currentHourStart,"MM-DD-YYYY hh:00 A"),moment(currentHourEnd,"MM-DD-YYYY hh:00 A")))
    {
        colorVal = 'same';
    }
@@ -99,7 +102,6 @@ function saveEvent(event){
    
   // let enteredEvent = event;
    event.preventDefault();
-
 
    let eventStorage = JSON.parse(localStorage.getItem("calendarEvents"));
 

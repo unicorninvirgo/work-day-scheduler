@@ -43,9 +43,7 @@ function createDayPlanner(){
         //get the CSS color class
         colorClass = getColorCSSClass(eventDateTime);
 
-        //display
-        let displayMessage  =  colorClass != 'past' ? true : false 
-
+        //see if event exists
         eventStorage.filter(x => {
                 if(x.userTime === time.replace(' ',''))
                 {

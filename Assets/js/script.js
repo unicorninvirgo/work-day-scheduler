@@ -9,32 +9,73 @@ var currentHour = moment().format("MM-DD-YYYY hh:00 A");
 
 elCurrentDay.append(today);
 
-//create day calendar for planner
-for( i=0; i < 24; i++){
-    let x = 0;
-    let ap = '';
+let eventStorage = []; 
+
+function createDayPlanner(){
+    //create day calendar for planner
+    for( i=0; i < 24; i++){
+        let x = 0;
+        let ap = '';
+        let colorClass = '';
+        var time;
+        var eventDateTime;
+        var existingEvent = '';
+
+        //set midday
+        i < 12 ? ap = 'AM' : ap = 'PM';
+
+        //format time of day
+        if(i===0 || i===24){
+            x = 12;
+        }
+        else if(i > 12)
+        {
+            x = i%12
+        }
+        else{
+            x = i;
+        }
+
+        //format the time of day at the hour
+        time = `${x}:00 ${ap}`
+        eventDateTime = getTimeHour(time);
+
+        //get the CSS color class
+        colorClass = getColorCSSClass(eventDateTime);
+
+        eventStorage.filter(x => {
+                if(x.userTime === time.replace(' ',''))
+                {
+                    existingEvent += x.userEvent + " ";
+                }       
+            });
+
+        //format div for calendar day row
+        elTimeBlock.append(`
+            <div class="row">
+                <div class="col" data-time="${x}:00${ap}">
+                    ${time}
+                </div>
+                <div class="col-8 ${colorClass} " data-event-message-time="${x}:00${ap}">
+                    <textarea id="event-message">${existingEvent}</textarea>
+                </div>
+                <div class="col event-save" data-event-button="button-${x}:00${ap}">
+                <p><i class="fas fa-book fa-2x"></i></p>
+                </div>
+            </div>`);
+    }
+}
+
+//append the day and time
+function getTimeHour(time){
+
+    return moment(today + ' ' + time, "dddd, MMMM Do YYYY hh:00 A").format("MM-DD-YYYY hh:00 A") ;
+
+}
+
+//get the color css class based on time of day
+function getColorCSSClass(eventDateTime){
     let colorClass = '';
-    var time;
-    var eventDateTime;
-
-    //set midday
-    i < 12 ? ap = 'AM' : ap = 'PM';
-
-    //format time of day
-    if(i===0 || i===24){
-        x = 12;
-    }
-    else if(i > 12)
-    {
-        x = i%12
-    }
-    else{
-        x = i;
-    }
-
-    time = `${x}:00 ${ap}`
-    eventDateTime = moment(today + ' ' + time, "dddd, MMMM Do YYYY hh:00 A").format("MM-DD-YYYY hh:00 A") ;
-
     
     switch (checkDate(eventDateTime))
     {
@@ -52,24 +93,9 @@ for( i=0; i < 24; i++){
 
     }
 
-    //format div for calendar day row
-    elTimeBlock.append(`
-        <div class="row">
-            <div class="col" data-time="${x}:00${ap}">
-                ${time}
-            </div>
-            <div class="col-8 ${colorClass} " data-event-message-time="${x}:00${ap}">
-                <textarea id="event-message"></textarea>
-            </div>
-            <div class="col event-save" data-event-button="button-${x}:00${ap}">
-               <p><i class="fas fa-book fa-2x"></i></p>
-            </div>
-        </div>`);
+    return colorClass;
 }
 
-function functionFormatDate(){
-
-}
 
 function checkDate(eventDateTime){
     var colorVal = '';
@@ -102,13 +128,6 @@ function saveEvent(event){
    
   // let enteredEvent = event;
    event.preventDefault();
-
-   let eventStorage = JSON.parse(localStorage.getItem("calendarEvents"));
-
-    if(eventStorage == null)
-    {
-       eventStorage = [];
-    }
    
    var dataEventTime = $(this).prev().attr('data-event-message-time');
    var dataEvent = $(this).prev().children().val();
@@ -124,5 +143,36 @@ function saveEvent(event){
   
 }
 
-//capture event to save event
-elTimeBlock.on("click",".event-save", saveEvent)
+function addEventListeners(){
+
+    //capture event to save event
+    elTimeBlock.on("click",".event-save", saveEvent)
+}
+
+
+//manage localstorage cleanup
+function cleanupStorage(){
+
+    eventStorage = JSON.parse(localStorage.getItem("calendarEvents"));
+
+    if(eventStorage == null)
+    {
+        eventStorage = [];
+    }
+
+    //cleanup localstorage
+    eventStorage = eventStorage.filter(x => (x.userDate == today))
+
+    console.log(eventStorage);
+
+}
+
+//call functions to run
+function init()
+{ 
+    cleanupStorage();
+    addEventListeners();
+    createDayPlanner();
+}
+//initiate the program
+init();

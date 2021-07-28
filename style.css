@@ -79,7 +79,7 @@ textarea {
   margin: 0px auto;
 }
 
-[data-event-time]{
+[data-event-message-time]{
   border-top: double;
  /* border-bottom: double;*/
   border-right: solid;

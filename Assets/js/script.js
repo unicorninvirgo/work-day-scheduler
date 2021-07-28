@@ -43,6 +43,9 @@ function createDayPlanner(){
         //get the CSS color class
         colorClass = getColorCSSClass(eventDateTime);
 
+        //display
+        let displayMessage  =  colorClass != 'past' ? true : false 
+
         eventStorage.filter(x => {
                 if(x.userTime === time.replace(' ',''))
                 {
@@ -57,13 +60,17 @@ function createDayPlanner(){
                     ${time}
                 </div>
                 <div class="col-8 ${colorClass} " data-event-message-time="${x}:00${ap}">
-                    <textarea id="event-message">${existingEvent}</textarea>
+                        <textarea id="event-message">${existingEvent}</textarea>'
                 </div>
                 <div class="col event-save" data-event-button="button-${x}:00${ap}">
                 <p><i class="fas fa-book fa-2x"></i></p>
                 </div>
             </div>`);
+
     }
+
+    //disable text entry for times in past
+    $('.past textarea').prop('disabled', true);
 }
 
 //append the day and time
